@@ -35,16 +35,6 @@ std::string get_date() {
 	return cur_date;
 }
 
-//used to validate, then return the active date to adjust grades for
-//currently doesn't do much data validation
-std::string validate_date(std::string date) {
-	if (date.size() != 10) {
-		std::cout << "invalid date size in set_active_date. size:" << date.size() << " setting date as current date\n";
-		return get_date();
-	}
-	return date;
-}
-
 //returns 0 if user doesn't exist in login_info, returns non-zero otherwise
 int check_user_exists(sql::SQLString user, std::shared_ptr<sql::Connection> con) {
 	try {
@@ -301,6 +291,16 @@ bool valid_grade(std::string grade) {
 	if (grade == "A" || grade == "B" || grade == "C" || grade == "D" || grade == "F")
 		return true;
 	return false;
+}
+
+//used to validate, then return the active date to adjust grades for
+//currently doesn't do much data validation
+std::string validate_date(std::string date) {
+	if (date.size() != 10) {
+		std::cout << "invalid date size in set_active_date. size:" << date.size() << " setting date as current date\n";
+		return get_date();
+	}
+	return date;
 }
 
 //returns true if grade successfully created
