@@ -38,7 +38,7 @@ std::string get_date() {
 //returns 0 if user doesn't exist in login_info, returns non-zero otherwise
 int check_user_exists(sql::SQLString user, std::shared_ptr<sql::Connection> con) {
 	try {
-		std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 			"SELECT count(*) FROM login_info WHERE username = ?"
 		));
 		stmnt->setString(1, user);
@@ -57,7 +57,7 @@ int check_user_exists(sql::SQLString user, std::shared_ptr<sql::Connection> con)
 //returns 0 if user and goal doesn't exist in user_goal, returns non-zero otherwise
 int check_user_goal_exists(sql::SQLString user, sql::SQLString goal, std::shared_ptr<sql::Connection> con) {
 	try {
-		std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 			"SELECT count(*) FROM user_goals WHERE username = ? AND goal = ?;"
 		));
 		stmnt->setString(1, user);
@@ -92,7 +92,7 @@ std::string get_hash(std::string password) {
 bool login(std::string user, std::string pass, std::string pepper, std::shared_ptr<sql::Connection> con) {
 	if (check_user_exists(user, con)) {
 		try {
-			std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+			std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 				"SELECT * FROM login_info WHERE username = ?;"
 			));
 			stmnt->setString(1, user);
@@ -149,7 +149,7 @@ bool create_user(std::string new_user, std::string password, std::string pepper,
 		std::cout << "in create_user: password_hash = " << password_hash << '\n';
 
 		try {
-			std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+			std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 				"INSERT INTO login_info (username, passwordHash, salt) VALUES ( ? , ? , ? );"
 			));
 			stmnt->setString(1, new_user);
@@ -171,7 +171,7 @@ bool create_new_goal(std::string user, std::string new_goal, std::shared_ptr<sql
 		return false;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"SELECT count(*) FROM user_goals WHERE username = ? AND goal = ?;"
 		));
 		ps->setString(1, user);
@@ -185,7 +185,7 @@ bool create_new_goal(std::string user, std::string new_goal, std::shared_ptr<sql
 			}
 		}
 
-		std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 			"INSERT INTO user_goals (username, goal) VALUES ( ? , ? );"
 		));
 		stmnt->setString(1, user);
@@ -205,7 +205,7 @@ void list_goals(std::string user, std::shared_ptr<sql::Connection> con) {
 		return;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"SELECT * FROM user_goals WHERE username = ?;"
 		));
 		ps->setString(1, user);
@@ -229,7 +229,7 @@ bool delete_goal(std::string user, std::string goal, std::shared_ptr<sql::Connec
 		return false;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"DELETE FROM user_goals WHERE username = ? AND goal = ?;"
 		));
 		ps->setString(1, user);
@@ -270,7 +270,7 @@ bool modify_grade(std::string user, std::string goal, std::string date, std::str
 		return false;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"UPDATE goal_grades SET grade = ? WHERE username = ? AND goal = ? AND cur_date = ?;"
 		));
 		ps->setString(1, new_grade);
@@ -315,7 +315,7 @@ bool create_new_grade(std::string user, std::string goal, std::string date, std:
 			return false;
 		}
 
-		std::shared_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> stmnt(con->prepareStatement(
 			"INSERT INTO goal_grades (username, goal, cur_date, grade) VALUES ( ? , ? , ? , ?);"
 		));
 		stmnt->setString(1, user);
@@ -340,7 +340,7 @@ bool input_all_grades(std::string user, std::string active_date, std::shared_ptr
 		return false;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"SELECT * FROM user_goals WHERE username = ?;"
 		));
 		ps->setString(1, user);
@@ -386,7 +386,7 @@ void list_grades(std::string user, std::string start_date, std::string end_date,
 		return;
 	}
 	try {
-		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
+		std::unique_ptr<sql::PreparedStatement> ps(con->prepareStatement(
 			"SELECT * FROM goal_grades WHERE username = ? AND cur_date BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) ORDER BY cur_date ASC, goal ASC;"
 		));
 		ps->setString(1, user);
