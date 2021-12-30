@@ -165,6 +165,7 @@ bool create_user(std::string new_user, std::string password, std::string pepper,
 	}
 }
 
+// returns true if goal created successfully, else return false
 bool create_new_goal(std::string user, std::string new_goal, std::shared_ptr<sql::Connection> con) {
 	if (!check_user_exists(user, con)) {
 		std::cerr << "create_new_goal tried to create a goal for a non-existent user. User: " << user << '\n';
@@ -199,6 +200,7 @@ bool create_new_goal(std::string user, std::string new_goal, std::shared_ptr<sql
 	}
 }
 
+// list all goals for the current user
 void list_goals(std::string user, std::shared_ptr<sql::Connection> con) {
 	if (!check_user_exists(user, con)) {
 		std::cerr << "list_goals called for a non-existent user. User: " << user << '\n';
@@ -243,6 +245,7 @@ bool delete_goal(std::string user, std::string goal, std::shared_ptr<sql::Connec
 	}
 }
 
+// returns an int that evaluates to true if the grade exists, else return 0 (false)
 int check_grade_exists(std::string user, std::string goal, std::string date, std::shared_ptr<sql::Connection> con) {
 	try {
 		std::shared_ptr<sql::PreparedStatement> ps(con->prepareStatement(
@@ -311,7 +314,7 @@ bool create_new_grade(std::string user, std::string goal, std::string date, std:
 	}
 	try {
 		if (check_grade_exists(user, goal, date, con)) {
-			std::cout << "create_new_grade tried to create a grade that already exists\n";
+			std::cout << "create_new_grade tried to create a grade that already exists (use modify a grade instead)\n";
 			return false;
 		}
 
@@ -412,6 +415,7 @@ void display_user_options(std::string current_user, std::string active_date) {
 		<< "9. display all grades within date range\n10. display this help message again\n";
 }
 
+// connect to database, control flow of program, get user input 
 int main(int argc, char* argv[]){
 	std::string current_date {get_date()};
 	const std::string pepper{ "nhfiem534" };
