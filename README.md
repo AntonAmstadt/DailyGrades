@@ -33,12 +33,15 @@ The whole point of a pepper value is that it is a secret value to be combined wi
 be found in my source code. Second, I would have used a slower hash function than SHA256 and used multiple iterations of that function. A slower hash function 
 and more iterations would mean an attacker has to spend more time to discover passwords.
 
+The program is fairly resilient to bad user input. However, when entering a date, a user could input any string with exactly 10 characters and the program 
+will accept it as a valid date. This bad date would not be able to end up in the database because MySQL would prevent it, and a user would be able to change this back to a valid date at any time. Having a bad date would prevent input and modification of grades until the date is made valid again by the user, by logging out and back in, or by exiting the program. I could have included a more rigorous date checking system, but I felt it was outside the scope of what I wanted from this project. I 
+would have implemented better date checking by using conversions between Julian and Gregorian dates.
+
 ## Build Information ##
-Currently this project only runs on windows. I may create a version to run on Linux in the near future, but for now, here is what I did to build the project:
+Currently this project only runs on 64 bit windows. I may create a version to run on Linux in the near future, but for now, here is what I did to build the project:
 I used Microsoft Visual Studio 2019 with their default C++ compiler. In order to use the CryptoPP library you need to first download it by going to
 https://cryptopp.com/#download. The download will include the file: cryptlib.vcxproj. Open this file in Visual Studio and build cryptlib with the following
-project properies: Configuration: Release, Platform: x64, C/C++->Code Generation->Runtime Library: Multi-threaded DLL (/MD). I am assuming you are using
-64 bit windows. Now create a Visual Studio project for Daily Grades. Configure it in the same way as the cryptlib project. Add my dgmain.cpp file to the
+project properies: Configuration: Release, Platform: x64, C/C++->Code Generation->Runtime Library: Multi-threaded DLL (/MD). Now create a Visual Studio project for Daily Grades. Configure it in the same way as the cryptlib project. Add my dgmain.cpp file to the
 source files in the project. If you haven't already, download the MySQL Server 8.0 and MySQL Connector C++ 8.0. Go back to the project properties settings
 and input the correct information to be able to use the CryptoPP and MySQL libraries. Here is what my settings looks like:
  <AdditionalIncludeDirectories>C:\coding\Cpp\cryptopp860;C:\Program Files\MySQL\Connector C++ 8.0\include\mysql;C:\Program Files\MySQL\MySQL Server 8.0\include;
