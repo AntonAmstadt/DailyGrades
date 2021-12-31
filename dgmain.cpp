@@ -8,7 +8,7 @@
 //MySQL c++ connectivity
 #include "jdbc.h"
 
-//contains get_password() - a function to return my MYSQL password
+//contains get_password() - a function to return my MySQL password
 #include "password.h"
 
 #include <iostream>
